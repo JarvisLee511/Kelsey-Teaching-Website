@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>周老師的學習樂園</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+/* =========================================================
+   CSS RESET & VARIABLES
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Nunito','Noto Sans TC',sans-serif;
+  /* Warm palette */
+  --bg:       #FFFBF4;
+  --surface:  #FFFFFF;
+  --border:   #EDE4D4;
+  --text:     #2D2010;
+  --muted:    #8B7355;
+  --accent:   #E07B3A;
+  --accent2:  #3A9E7B;
+  --accent3:  #5B7FE0;
+  /* game zone colors */
+  --grain:#F5A623; --grain-bg:#FFF8E7; --grain-bd:#FDDFA0;
+  --protein:#E05B5B; --protein-bg:#FFF0F0; --protein-bd:#F5B8B8;
+  --veg:#4CAF7D; --veg-bg:#F0FAF4; --veg-bd:#A8DDB5;
+  --fruit:#9B59B6; --fruit-bg:#F8F0FF; --fruit-bd:#D7B8EE;
+  --dairy:#3A9BD5; --dairy-bg:#EBF7FF; --dairy-bd:#9BD0F0;
+  --oil:#78909C; --oil-bg:#F4F6F7; --oil-bd:#B0BEC5;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: var(--font); }
+
+/* =========================================================
+   UTILITY
+   ========================================================= */
+.hidden { display: none !important; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* =========================================================
+   ████  HOME PAGE
+   ========================================================= */
+#home {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-1 { width:500px;height:500px;background:radial-gradient(circle,rgba(240,184,100,.18),transparent 70%);top:-100px;right:-80px;animation:blobFloat 9s ease-in-out infinite; }
+.blob-2 { width:400px;height:400px;background:radial-gradient(circle,rgba(76,175,125,.15),transparent 70%);bottom:-60px;left:-60px;animation:blobFloat 11s ease-in-out infinite reverse; }
+.blob-3 { width:280px;height:280px;background:radial-gradient(circle,rgba(91,127,224,.12),transparent 70%);bottom:20%;right:10%;animation:blobFloat 7s ease-in-out infinite 2s; }
+@keyframes blobFloat { 0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(12px,-18px) scale(1.04);} }
+
+.home-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+/* Teacher hero */
+.hero {
+  text-align: center;
+  padding: 0 0 48px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFF3E8;
+  border: 1.5px solid #FDDFA0;
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 20px;
+  animation: fadeUp .6s ease both;
+}
+.hero-mascot {
+  font-size: 88px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 16px;
+  animation: mascotDrop .8s cubic-bezier(.175,.885,.32,1.275) both .1s;
+}
+@keyframes mascotDrop { 0%{transform:translateY(-40px) scale(.7);opacity:0;} 100%{transform:translateY(0) scale(1);opacity:1;} }
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  animation: fadeUp .6s ease both .2s;
+}
+.hero-title .accent { color: var(--accent); }
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 440px;
+  margin: 0 auto 28px;
+  animation: fadeUp .6s ease both .3s;
+}
+
+/* Stat pills */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.stat-pill {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-pill span { font-size: 1rem; }
+
+/* Section label */
+.section-label {
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeUp .6s ease both .45s;
+}
+
+/* Game cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  animation: fadeUp .6s ease both .5s;
+}
+@media(max-width:700px){
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Hamburger / Drawer ── */
+.hamburger-btn {
+  position: fixed;
+  top: 16px; right: 16px;
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; flex-direction:column;
+  align-items: center; justify-content: center;
+  gap: 5px; cursor: pointer; z-index: 1500;
+  box-shadow: 0 2px 10px rgba(45,32,16,.1);
+  transition: background .15s, box-shadow .15s;
+}
+.hamburger-btn:hover { background: #FFF3E8; border-color: var(--accent); }
+.hamburger-btn span {
+  display: block; width: 20px; height: 2.5px;
+  background: var(--text); border-radius: 2px;
+  transition: transform .25s, opacity .25s;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+.drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,32,16,.35);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 1400;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+
+.drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(320px, 88vw);
+  height: 100%;
+  background: var(--surface);
+  border-left: 1.5px solid var(--border);
+  z-index: 1450;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+  padding: 0;
+  box-shadow: -8px 0 32px rgba(45,32,16,.1);
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  padding: 24px 20px 16px;
+  border-bottom: 1.5px solid var(--border);
+}
+.drawer-header-title {
+  font-size: 1.1rem; font-weight: 900; color: var(--text);
+}
+.drawer-header-sub {
+  font-size: .8rem; color: var(--muted); margin-top: 2px;
+}
+
+.drawer-items {
+  flex: 1; padding: 16px 12px;
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto;
+}
+
+.drawer-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, background .15s;
+  text-align: left;
+}
+.drawer-item:hover { transform: translateX(-3px); }
+.drawer-item-food:hover   { border-color: var(--accent);  background: #FFF8F4; }
+.drawer-item-physics:hover{ border-color: var(--accent2); background: #F0FAF6; }
+.drawer-item-vietnam:hover{ border-color: var(--accent3); background: #EEF2FF; }
+
+.drawer-item-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; flex-shrink: 0;
+}
+.drawer-item-food .drawer-item-icon    { background: #FFF3E8; }
+.drawer-item-physics .drawer-item-icon { background: #E8F8F2; }
+.drawer-item-vietnam .drawer-item-icon { background: #EEF2FF; }
+
+.drawer-item-info { flex: 1; }
+.drawer-item-name { font-size: .95rem; font-weight: 900; color: var(--text); }
+.drawer-item-desc { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+.drawer-item-tag {
+  font-size: .68rem; font-weight: 800; padding: 3px 9px;
+  border-radius: 50px; white-space: nowrap;
+}
+.drawer-item-food .drawer-item-tag    { background:#FFF3E8; color:var(--accent); }
+.drawer-item-physics .drawer-item-tag { background:#E8F8F2; color:var(--accent2); }
+.drawer-item-vietnam .drawer-item-tag { background:#EEF2FF; color:var(--accent3); }
+
+.drawer-footer {
+  padding: 16px 20px;
+  border-top: 1.5px solid var(--border);
+  font-size: .75rem; color: var(--muted); text-align: center;
+}
+
+.game-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  position: relative;
+  overflow: hidden;
+}
+.game-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.game-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(45,32,16,.1); }
+.game-card:active { transform: scale(.97); }
+
+.card-food::before { background: linear-gradient(135deg, rgba(245,166,35,.07), rgba(76,175,125,.07)); }
+.card-physics::before { background: linear-gradient(135deg, rgba(58,158,123,.07), rgba(91,127,224,.07)); }
+.card-vietnam::before { background: linear-gradient(135deg, rgba(91,127,224,.07), rgba(224,91,91,.07)); }
+.game-card:hover::before { opacity: 1; }
+
+.card-icon-wrap {
+  width: 60px; height: 60px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+.card-food .card-icon-wrap   { background:#FFF3E8; }
+.card-physics .card-icon-wrap { background:#E8F8F2; }
+.card-vietnam .card-icon-wrap { background:#EEF2FF; }
+
+.card-tag {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 50px;
+  margin-bottom: 10px;
+  letter-spacing: .05em;
+}
+.card-food .card-tag   { background:#FFF3E8; color:var(--accent); }
+.card-physics .card-tag { background:#E8F8F2; color:var(--accent2); }
+.card-vietnam .card-tag { background:#EEF2FF; color:var(--accent3); }
+
+.card-title { font-size: 1.25rem; font-weight: 900; margin-bottom: 8px; }
+.card-desc  { font-size: .85rem; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+
+.card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .85rem;
+  font-weight: 800;
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: 2px solid;
+  transition: background .15s, color .15s;
+}
+.card-food .card-btn    { border-color:var(--accent); color:var(--accent); }
+.card-food .card-btn:hover { background:var(--accent); color:#fff; }
+.card-physics .card-btn { border-color:var(--accent2); color:var(--accent2); }
+.card-physics .card-btn:hover { background:var(--accent2); color:#fff; }
+.card-vietnam .card-btn { border-color:var(--accent3); color:var(--accent3); }
+.card-vietnam .card-btn:hover { background:var(--accent3); color:#fff; }
+
+.card-levels {
+  position: absolute;
+  top: 18px; right: 18px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 3px 10px;
+}
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+/* Footer strip */
+.home-footer {
+  text-align: center;
+  margin-top: 52px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+/* =========================================================
+   SHARED GAME CHROME (nav bar back button)
+   ========================================================= */
+.game-nav {
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .85rem;
+  font-weight: 800;
+  color: var(--muted);
+  padding: 6px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.back-btn:hover { color:var(--accent); border-color:var(--accent); background:#FFF3E8; }
+.game-nav-title { font-weight: 900; font-size: 1rem; flex: 1; }
+
+/* =========================================================
+   ████  GAME 1 — FOOD CLASSIFICATION
+   ========================================================= */
+#game-food { background: var(--bg); }
+#food-main { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* Food header */
+.food-header {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fh-level {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 5px 14px;
+  font-weight: 900;
+  font-size: .85rem;
+}
+.fh-title { flex: 1; font-weight: 800; font-size: 1rem; }
+.fh-stat {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 5px 12px;
+  font-size: .82rem;
+  font-weight: 700;
+}
+.fh-stat .fl { font-size: .68rem; color: var(--muted); display: block; }
+.fh-stat .fv { font-size: 1rem; }
+
+/* Zones */
+.zones-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+@media(max-width:520px){.zones-grid{grid-template-columns:repeat(2,1fr);}}
+
+.fzone {
+  border-radius: 18px;
+  border: 2.5px dashed;
+  padding: 10px 8px;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, border-style .15s;
+}
+.fzone:hover, .fzone.fz-hl { transform: translateY(-3px); border-style: solid; }
+
+.fzone.fz-ok  { animation: fzOk  .5s ease; }
+.fzone.fz-err { animation: fzErr .4s ease; }
+@keyframes fzOk  { 0%{transform:scale(1)} 30%{transform:scale(1.04)} 100%{transform:scale(1)} }
+@keyframes fzErr { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+
+.fzone-hd { text-align: center; margin-bottom: 6px; width: 100%; }
+.fzone-emoji { font-size: 1.6rem; display: block; margin-bottom: 2px; }
+.fzone-name { font-weight: 900; font-size: .82rem; display: block; }
+.fzone-hint { font-size: .65rem; opacity: .7; display: none; }
+@media(min-width:600px){ .fzone-hint { display: block; } }
+.fzone-items { width:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:4px; }
+
+.fzone-grain   { background:var(--grain-bg);   border-color:var(--grain-bd);   }
+.fzone-grain .fzone-name   { color:#7A5200; }
+.fzone-grain:hover,.fzone-grain.fz-hl { box-shadow:0 6px 20px rgba(245,166,35,.25); border-color:var(--grain); }
+.placed-grain   { background:var(--grain-bd);   color:#7A5200; }
+
+.fzone-protein { background:var(--protein-bg); border-color:var(--protein-bd); }
+.fzone-protein .fzone-name { color:#8B1A1A; }
+.fzone-protein:hover,.fzone-protein.fz-hl { box-shadow:0 6px 20px rgba(224,91,91,.25); border-color:var(--protein); }
+.placed-protein { background:var(--protein-bd); color:#8B1A1A; }
+
+.fzone-veg     { background:var(--veg-bg);     border-color:var(--veg-bd);     }
+.fzone-veg .fzone-name     { color:#1A5E35; }
+.fzone-veg:hover,.fzone-veg.fz-hl { box-shadow:0 6px 20px rgba(76,175,125,.25); border-color:var(--veg); }
+.placed-veg     { background:var(--veg-bd);     color:#1A5E35; }
+
+.fzone-fruit   { background:var(--fruit-bg);   border-color:var(--fruit-bd);   }
+.fzone-fruit .fzone-name   { color:#5B1A8B; }
+.fzone-fruit:hover,.fzone-fruit.fz-hl { box-shadow:0 6px 20px rgba(155,89,182,.25); border-color:var(--fruit); }
+.placed-fruit   { background:var(--fruit-bd);   color:#5B1A8B; }
+
+.fzone-dairy   { background:var(--dairy-bg);   border-color:var(--dairy-bd);   }
+.fzone-dairy .fzone-name   { color:#0D4E7A; }
+.fzone-dairy:hover,.fzone-dairy.fz-hl { box-shadow:0 6px 20px rgba(58,155,213,.25); border-color:var(--dairy); }
+.placed-dairy   { background:var(--dairy-bd);   color:#0D4E7A; }
+
+.fzone-oil     { background:var(--oil-bg);     border-color:var(--oil-bd);     }
+.fzone-oil .fzone-name     { color:#37474F; }
+.fzone-oil:hover,.fzone-oil.fz-hl { box-shadow:0 6px 20px rgba(120,144,156,.25); border-color:var(--oil); }
+.placed-oil     { background:var(--oil-bd);     color:#37474F; }
+
+.placed-chip {
+  border-radius: 50px;
+  padding: 3px 9px;
+  font-size: .7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  animation: popIn .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn { from{transform:scale(.5);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+/* Pool */
+.food-pool-wrap {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 12px;
+}
+.pool-hint { text-align:center; font-size:.78rem; color:var(--muted); font-weight:700; margin-bottom:8px; }
+#food-pool { display:flex; flex-wrap:wrap; justify-content:center; gap:7px; min-height:60px; }
+
+.food-chip {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 13px;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: grab;
+  touch-action: none;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  display: flex; align-items:center; gap:5px;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(45,32,16,.05);
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.food-chip:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(45,32,16,.1); }
+.food-chip.f-dragging {
+  opacity: 0.45;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+.food-chip.f-placed { opacity:.2; pointer-events:none; display:none; }
+
+/* 拖曳中的浮動複製 */
+#drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  background: var(--accent);
+  color: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 50px;
+  padding: 8px 16px;
+  font-size: .9rem;
+  font-weight: 800;
+  display: flex; align-items:center; gap:6px;
+  box-shadow: 0 8px 24px rgba(224,123,58,.45);
+  transform: translate(-50%,-50%) rotate(-4deg) scale(1.08);
+  transition: none;
+  white-space: nowrap;
+  font-family: var(--font);
+}
+
+/* 放置區 hover 高亮 */
+.fzone.dz-over {
+  border-style: solid !important;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 28px rgba(224,123,58,.2);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 18px; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  padding: 9px 20px;
+  font-weight: 700;
+  font-size: .85rem;
+  display: flex; align-items:center; gap:8px;
+  box-shadow: 0 8px 24px rgba(45,32,16,.13);
+  transition: transform .35s cubic-bezier(.175,.885,.32,1.275);
+  z-index: 9999;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.t-show { transform: translateX(-50%) translateY(0); }
+.toast.t-ok  { border-color: var(--veg-bd);    color: #1A5E35; }
+.toast.t-err { border-color: var(--protein-bd); color: #8B1A1A; }
+
+.combo-badge {
+  position: fixed;
+  top: 68px; left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50px;
+  padding: 5px 16px;
+  font-weight: 900;
+  font-size: .95rem;
+  box-shadow: 0 4px 16px rgba(224,123,58,.4);
+  transition: transform .3s cubic-bezier(.175,.885,.32,1.275), opacity .3s;
+  z-index: 9998;
+  pointer-events: none;
+}
+.combo-badge.cb-show { transform: translateX(-50%) scale(1); }
+
+/* =========================================================
+   ████  SHARED MODAL
+   ========================================================= */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,32,16,.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items:center; justify-content:center;
+  z-index: 3000;
+  padding: 16px;
+}
+.modal-box {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 28px;
+  padding: 32px 28px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(45,32,16,.15);
+  animation: modalIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes modalIn { from{transform:scale(.8);opacity:0;} to{transform:scale(1);opacity:1;} }
+.modal-icon { font-size: 3.5rem; display:block; margin-bottom:8px; }
+.modal-title { font-size: 1.7rem; font-weight: 900; margin-bottom: 8px; }
+.modal-sub { font-size:.9rem; color:var(--muted); margin-bottom:20px; line-height:1.6; }
+.modal-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
+.mstat { background:var(--bg); border:1.5px solid var(--border); border-radius:12px; padding:10px; }
+.mstat .ms-l { font-size:.68rem; color:var(--muted); font-weight:700; }
+.mstat .ms-v { font-size:1.3rem; font-weight:900; }
+.review-list { text-align:left; display:flex; flex-direction:column; gap:7px; max-height:200px; overflow-y:auto; margin-bottom:16px; }
+.review-item { border-radius:10px; padding:9px 12px; font-size:.82rem; display:flex; align-items:flex-start; gap:8px; }
+.review-item.ri-wrong { background:var(--protein-bg); border:1px solid var(--protein-bd); }
+.ri-name { font-weight:700; }
+.ri-note { color:var(--muted); font-size:.75rem; margin-top:1px; }
+.btn-m {
+  width:100%; border-radius:14px; padding:13px 20px; font-size:1rem; font-weight:900;
+  transition: transform .15s, box-shadow .15s; margin-bottom:7px; border: 2px solid transparent;
+}
+.btn-m:last-child { margin-bottom:0; }
+.btn-primary { background:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(224,123,58,.35); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(224,123,58,.4); }
+.btn-secondary { background:var(--bg); color:var(--text); border-color:var(--border); }
+.btn-secondary:hover { background:var(--border); }
+
+/* =========================================================
+   ████  GAME 2 — PHYSICS QUIZ
+   ========================================================= */
+#game-physics { background: var(--bg); }
+.phys-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; }
+
+.phys-progress-bar {
+  background: var(--border); border-radius:50px; height:6px; margin-bottom:20px; overflow:hidden;
+}
+.phys-progress-fill {
+  height:100%; border-radius:50px; background:var(--accent2);
+  transition: width .5s ease;
+}
+
+.phys-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  animation: fadeUp .4s ease both;
+}
+
+.phys-cat {
+  display: inline-flex; align-items:center; gap:6px;
+  font-size: .72rem; font-weight:800; letter-spacing:.06em;
+  padding: 4px 12px; border-radius:50px; margin-bottom:14px;
+  background:#E8F8F2; color:var(--accent2);
+}
+
+.phys-q {
+  font-size: 1.1rem; font-weight: 800; line-height: 1.55; margin-bottom: 20px;
+}
+
+.phys-opts { display:flex; flex-direction:column; gap:10px; }
+
+.phys-opt {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex; align-items:center; gap:12px;
+  font-size: .92rem; font-weight: 700;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+  text-align: left;
+}
+.phys-opt:hover:not(:disabled) { border-color:var(--accent2); background:#F0FAF6; transform:translateX(4px); }
+.phys-opt:disabled { cursor:default; }
+.phys-opt.po-correct { border-color:var(--veg);    background:var(--veg-bg);    color:#1A5E35; }
+.phys-opt.po-wrong   { border-color:var(--protein); background:var(--protein-bg); color:#8B1A1A; }
+
+.opt-letter {
+  width:28px; height:28px; border-radius:8px; background:var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; font-weight:900; flex-shrink:0;
+  transition: background .15s, color .15s;
+}
+.po-correct .opt-letter { background:var(--veg); color:#fff; }
+.po-wrong   .opt-letter { background:var(--protein); color:#fff; }
+
+.phys-explain {
+  background:var(--grain-bg); border:1.5px solid var(--grain-bd);
+  border-radius:14px; padding:14px 16px;
+  font-size:.85rem; color:#5A3E00; line-height:1.65;
+  animation: fadeUp .4s ease both;
+  margin-top:12px;
+}
+.phys-explain strong { color:#7A5200; }
+
+.btn-phys-next {
+  width:100%; border-radius:14px; padding:13px; font-size:1rem; font-weight:900;
+  background:var(--accent2); color:#fff;
+  box-shadow:0 4px 14px rgba(58,158,123,.3);
+  transition: transform .15s;
+}
+.btn-phys-next:hover { transform:translateY(-2px); }
+
+/* Score screen */
+.phys-score {
+  background: var(--surface); border:2px solid var(--border); border-radius:24px;
+  padding:40px 28px; text-align:center;
+  animation: modalIn .4s cubic-bezier(.175,.885,.32,1.275) both;
+}
+.score-big { font-size: 3.5rem; font-weight:900; color:var(--accent2); margin:8px 0; }
+.score-stars { font-size: 2rem; letter-spacing:6px; margin-bottom:16px; }
+.score-label { font-size: .85rem; color:var(--muted); margin-bottom:24px; }
+.phys-score-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+.psg-cell { background:var(--bg); border:1.5px solid var(--border); border-radius:12px; padding:12px; }
+.psg-cell .psc-l { font-size:.7rem; color:var(--muted); font-weight:700; }
+.psg-cell .psc-v { font-size:1.4rem; font-weight:900; }
+.btn-phys-redo {
+  width:100%; border-radius:14px; padding:13px; font-size:1rem; font-weight:900;
+  background:var(--accent2); color:#fff; box-shadow:0 4px 14px rgba(58,158,123,.3);
+  margin-bottom:8px; transition:transform .15s;
+}
+.btn-phys-redo:hover { transform:translateY(-2px); }
+
+/* =========================================================
+   ████  GAME 3 — VIETNAM QUIZ
+   ========================================================= */
+#game-vietnam { background: var(--bg); }
+.viet-wrap { max-width: 680px; margin:0 auto; padding:24px 16px 60px; }
+
+.viet-progress-bar { background:var(--border); border-radius:50px; height:6px; margin-bottom:20px; overflow:hidden; }
+.viet-progress-fill { height:100%; border-radius:50px; background:var(--accent3); transition:width .5s ease; }
+
+.viet-card {
+  background:var(--surface); border:2px solid var(--border); border-radius:24px;
+  padding:28px 24px; margin-bottom:14px;
+  animation: fadeUp .4s ease both;
+}
+.viet-cat {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.72rem; font-weight:800; letter-spacing:.06em;
+  padding:4px 12px; border-radius:50px; margin-bottom:14px;
+  background:#EEF2FF; color:var(--accent3);
+}
+.viet-q { font-size:1.1rem; font-weight:800; line-height:1.55; margin-bottom:20px; }
+.viet-opts { display:flex; flex-direction:column; gap:10px; }
+
+.viet-opt {
+  background:var(--bg); border:2px solid var(--border); border-radius:14px;
+  padding:12px 16px; display:flex; align-items:center; gap:12px;
+  font-size:.92rem; font-weight:700; cursor:pointer;
+  transition:border-color .15s, background .15s, transform .1s; text-align:left;
+}
+.viet-opt:hover:not(:disabled) { border-color:var(--accent3); background:#EEF2FF; transform:translateX(4px); }
+.viet-opt:disabled { cursor:default; }
+.viet-opt.vo-correct { border-color:var(--veg); background:var(--veg-bg); color:#1A5E35; }
+.viet-opt.vo-wrong   { border-color:var(--protein); background:var(--protein-bg); color:#8B1A1A; }
+
+.vopt-letter {
+  width:28px; height:28px; border-radius:8px; background:var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; font-weight:900; flex-shrink:0;
+  transition:background .15s, color .15s;
+}
+.vo-correct .vopt-letter { background:var(--veg); color:#fff; }
+.vo-wrong   .vopt-letter { background:var(--protein); color:#fff; }
+
+.viet-hint {
+  background:#EEF2FF; border:1.5px solid #BCC9F5;
+  border-radius:14px; padding:13px 15px;
+  font-size:.83rem; color:#2A3E88; line-height:1.65;
+  animation:fadeUp .4s ease both; margin-top:11px;
+}
+
+.btn-viet-next {
+  width:100%; border-radius:14px; padding:13px; font-size:1rem; font-weight:900;
+  background:var(--accent3); color:#fff; box-shadow:0 4px 14px rgba(91,127,224,.3);
+  transition:transform .15s;
+}
+.btn-viet-next:hover { transform:translateY(-2px); }
+
+/* Viet score */
+.viet-score {
+  background:var(--surface); border:2px solid var(--border); border-radius:24px;
+  padding:40px 28px; text-align:center; animation:modalIn .4s cubic-bezier(.175,.885,.32,1.275) both;
+}
+.vscore-big { font-size:3.5rem; font-weight:900; color:var(--accent3); margin:8px 0; }
+.vscore-stars { font-size:2rem; letter-spacing:6px; margin-bottom:16px; }
+.btn-viet-redo {
+  width:100%; border-radius:14px; padding:13px; font-size:1rem; font-weight:900;
+  background:var(--accent3); color:#fff; box-shadow:0 4px 14px rgba(91,127,224,.3);
+  margin-bottom:8px; transition:transform .15s;
+}
+.btn-viet-redo:hover { transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- TOAST & COMBO (shared) -->
+<div id="toast" class="toast"><span id="toast-icon"></span><span id="toast-text"></span></div>
+<div id="combo-badge" class="combo-badge"></div>
+
+<!-- =========================================================
+     HOME
+     ========================================================= -->
+<div id="home" class="page active">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="home-inner">
+    <div class="hero">
+      <div class="hero-badge">✨ 周老師的學習樂園</div>
+      <span class="hero-mascot">🍎</span>
+      <h1 class="hero-title">一起來玩<br><span class="accent">學習遊戲</span>！</h1>
+      <p class="hero-sub">用遊戲學習，每一題都很有趣，沒有壓力喔 🚀</p>
+      <div class="hero-stats" style="flex-wrap:nowrap;justify-content:center;">
+        <div class="stat-pill"><span>📚</span> 6 大食物類別</div>
+        <div class="stat-pill"><span>⚡</span> 慣性物理</div>
+        <div class="stat-pill"><span>🇻🇳</span> 越南文化</div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:8px;animation:fadeUp .6s ease both .5s;">
+      <button onclick="openDrawer()" style="display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;border:none;border-radius:16px;padding:16px 32px;font-size:1.1rem;font-weight:900;font-family:var(--font);cursor:pointer;box-shadow:0 4px 18px rgba(224,123,58,.35);transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(224,123,58,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(224,123,58,.35)'">
+        <span style="font-size:1.3rem">🎮</span> 選一個遊戲開始！
+      </button>
+    </div>
+
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:28px;flex-wrap:wrap;animation:fadeUp .6s ease both .6s;">
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s,border-color .15s;" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='var(--accent)'" onmouseout="this.style.transform='';this.style.borderColor=''" onclick="openDrawerTo('food')">
+        <span style="font-size:2rem;background:#FFF3E8;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">🌈</span>
+        <div><div style="font-weight:900;font-size:.95rem;">飲食彩虹大冒險</div><div style="font-size:.75rem;color:var(--muted);">認識六大類食物</div></div>
+      </div>
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s,border-color .15s;" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='var(--accent2)'" onmouseout="this.style.transform='';this.style.borderColor=''" onclick="openDrawerTo('physics')">
+        <span style="font-size:2rem;background:#E8F8F2;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">🚌</span>
+        <div><div style="font-weight:900;font-size:.95rem;">生活物理小問答</div><div style="font-size:.75rem;color:var(--muted);">生活中的物理現象</div></div>
+      </div>
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s,border-color .15s;" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='var(--accent3)'" onmouseout="this.style.transform='';this.style.borderColor=''" onclick="openDrawerTo('vietnam')">
+        <span style="font-size:2rem;background:#EEF2FF;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">🇻🇳</span>
+        <div><div style="font-weight:900;font-size:.95rem;">認識越南小問答</div><div style="font-size:.75rem;color:var(--muted);">越南文化與生活</div></div>
+      </div>
+    </div>
+
+    <div class="home-footer">
+      用愛製作 ❤️ &nbsp;周老師的學習樂園 &nbsp;·&nbsp; 2025
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     GAME 1: FOOD
+     ========================================================= -->
+<div id="game-food" class="page">
+  <nav class="game-nav">
+    <button class="back-btn" onclick="goHome()">← 首頁</button>
+    <span class="game-nav-title">🌈 飲食彩虹大冒險</span>
+  </nav>
+
+  <div id="food-main">
+    <!-- Header -->
+    <div class="food-header">
+      <div class="fh-level" id="f-level-badge">第 1 關</div>
+      <div class="fh-title" id="f-level-title">認識食物</div>
+      <div class="fh-stat"><span class="fl">剩餘</span><span class="fv" id="f-remaining">0</span></div>
+      <div class="fh-stat"><span class="fl">⏱ 時間</span><span class="fv" id="f-timer">—</span></div>
+      <div class="fh-stat"><span class="fl">✨ 連擊</span><span class="fv" id="f-combo">0</span></div>
+    </div>
+
+    <!-- Zones -->
+    <div class="zones-grid">
+      <div class="fzone fzone-grain"   data-type="grain"   onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🌾</span><span class="fzone-name">飯麵類 🍚</span><span class="fzone-hint">白飯、麵條、地瓜</span></div>
+        <div class="fzone-items" id="fz-grain"></div>
+      </div>
+      <div class="fzone fzone-protein" data-type="protein" onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🥩</span><span class="fzone-name">肉蛋豆 🥩</span><span class="fzone-hint">雞肉、魚、豬肉、蛋</span></div>
+        <div class="fzone-items" id="fz-protein"></div>
+      </div>
+      <div class="fzone fzone-veg"     data-type="veg"     onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🥦</span><span class="fzone-name">蔬菜 🥦</span><span class="fzone-hint">花椰菜、紅蘿蔔、菇菇</span></div>
+        <div class="fzone-items" id="fz-veg"></div>
+      </div>
+      <div class="fzone fzone-fruit"   data-type="fruit"   onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🍎</span><span class="fzone-name">水果 🍎</span><span class="fzone-hint">蘋果、香蕉、橘子</span></div>
+        <div class="fzone-items" id="fz-fruit"></div>
+      </div>
+      <div class="fzone fzone-dairy"   data-type="dairy"   onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🥛</span><span class="fzone-name">牛奶類 🥛</span><span class="fzone-hint">牛奶、起司、優格</span></div>
+        <div class="fzone-items" id="fz-dairy"></div>
+      </div>
+      <div class="fzone fzone-oil"     data-type="oil"     onclick="onFZoneClick(this)">
+        <div class="fzone-hd"><span class="fzone-emoji">🫒</span><span class="fzone-name">油脂堅果 🥜</span><span class="fzone-hint">沙拉油、花生、芝麻</span></div>
+        <div class="fzone-items" id="fz-oil"></div>
+      </div>
+    </div>
+
+    <!-- Pool -->
+    <div class="food-pool-wrap">
+      <div class="pool-hint">✋ 拖曳食物，放進上面正確的框框！（也可以點一下再點框框）</div>
+      <div id="food-pool"></div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="f-modal-lv" class="modal-overlay hidden">
+    <div class="modal-box">
+      <span class="modal-icon">🎉</span>
+      <div class="modal-title">關卡完成！</div>
+      <div class="modal-sub" id="f-modal-lv-sub"></div>
+      <div class="modal-stats">
+        <div class="mstat"><div class="ms-l">正確數量</div><div class="ms-v" id="f-stat-ok">0</div></div>
+        <div class="mstat"><div class="ms-l">最高連擊</div><div class="ms-v" id="f-stat-combo">0</div></div>
+      </div>
+      <button class="btn-m btn-primary" onclick="fNextLevel()">下一關 →</button>
+    </div>
+  </div>
+  <div id="f-modal-fin" class="modal-overlay hidden">
+    <div class="modal-box">
+      <span class="modal-icon">🏆</span>
+      <div class="modal-title">全部過關！</div>
+      <div class="modal-sub">你好棒！把所有食物都找到家了！🌈</div>
+      <div id="f-wrong-list" class="review-list"></div>
+      <button class="btn-m btn-primary" onclick="initFoodGame()">再玩一次 🔄</button>
+      <button class="btn-m btn-secondary" onclick="goHome()">回首頁</button>
+    </div>
+  </div>
+  <div id="f-modal-time" class="modal-overlay hidden">
+    <div class="modal-box">
+      <span class="modal-icon">⏰</span>
+      <div class="modal-title">時間到了！</div>
+      <div class="modal-sub">沒關係！再試一次，<br>你一定做得到！💪</div>
+      <button class="btn-m btn-primary" onclick="fRetry()">再試一次 💪</button>
+      <button class="btn-m btn-secondary" onclick="goHome()">回首頁</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     GAME 2: PHYSICS
+     ========================================================= -->
+<div id="game-physics" class="page">
+  <nav class="game-nav">
+    <button class="back-btn" onclick="goHome()">← 首頁</button>
+    <span class="game-nav-title">🚌 生活物理小問答</span>
+  </nav>
+  <div class="phys-wrap">
+    <div class="phys-progress-bar"><div class="phys-progress-fill" id="p-progress" style="width:0%"></div></div>
+    <div id="phys-content"></div>
+  </div>
+</div>
+
+<!-- =========================================================
+     GAME 3: VIETNAM
+     ========================================================= -->
+<div id="game-vietnam" class="page">
+  <nav class="game-nav">
+    <button class="back-btn" onclick="goHome()">← 首頁</button>
+    <span class="game-nav-title">🇻🇳 認識越南小問答</span>
+  </nav>
+  <div class="viet-wrap">
+    <div class="viet-progress-bar"><div class="viet-progress-fill" id="v-progress" style="width:0%"></div></div>
+    <div id="viet-content"></div>
+  </div>
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+<script>
+/* ===== PAGE NAV ===== */
+function goGame(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome() {
+  clearInterval(fTimerInt);
+  closeDrawer();
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('home').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* =================================================================
+   GAME 1: FOOD CLASSIFICATION
+   ================================================================= */
+const FOOD_DATA = {
+  lv1:[
+    {emoji:'🍚',name:'白飯',type:'grain',note:'白飯是米做的，記住：米飯、麵包都放「飯麵類」這格！'},
+    {emoji:'🍞',name:'麵包',type:'grain',note:'麵包也是麵粉做的，和白飯一樣放「飯麵類」喔。'},
+    {emoji:'🥦',name:'花椰菜',type:'veg',note:'花椰菜是綠色的菜，所有的菜都要放「蔬菜」這格！'},
+    {emoji:'🥕',name:'紅蘿蔔',type:'veg',note:'紅蘿蔔是橘色的蔬菜，記住：蔬菜就是菜，放「蔬菜」那格。'},
+    {emoji:'🍗',name:'雞腿',type:'protein',note:'雞肉是肉，所有的肉都放「肉蛋豆」這格！'},
+    {emoji:'🥚',name:'雞蛋',type:'protein',note:'雞蛋也是「肉蛋豆」類，每天吃蛋可以讓身體有力氣。'},
+    {emoji:'🍎',name:'蘋果',type:'fruit',note:'蘋果甜甜的，是水果。記住：甜甜的果實大多是水果！'},
+    {emoji:'🍌',name:'香蕉',type:'fruit',note:'香蕉也是水果，放「水果」那格。剝皮就可以吃喔！'},
+    {emoji:'🥛',name:'牛奶',type:'dairy',note:'牛奶白白的，喝了骨頭會變硬，放「牛奶類」這格。'},
+    {emoji:'🥜',name:'花生',type:'oil',note:'花生是小小顆的堅果，放「油脂堅果」那格。'},
+  ],
+  lv2:[
+    {emoji:'🍜',name:'麵條',type:'grain',note:'麵條和白飯一樣，都是「飯麵類」。每天吃麵吃飯就是在吃這類！'},
+    {emoji:'🍠',name:'地瓜',type:'grain',note:'地瓜煮熟甜甜的，它也是「飯麵類」，不是蔬菜喔！'},
+    {emoji:'🐟',name:'魚',type:'protein',note:'魚是肉類，放「肉蛋豆」那格。吃魚對身體很好！'},
+    {emoji:'🥩',name:'豬肉',type:'protein',note:'豬肉是我們最常吃的肉，記住：肉類都放「肉蛋豆」。'},
+    {emoji:'🍄',name:'香菇',type:'veg',note:'香菇是菇，也是蔬菜的一種，放「蔬菜」那格。'},
+    {emoji:'🌽',name:'玉米',type:'grain',note:'玉米黃黃的，一粒一粒的，也是「飯麵類」喔！'},
+    {emoji:'🍊',name:'橘子',type:'fruit',note:'橘子剝開一片一片，甜甜酸酸的，是水果類。'},
+    {emoji:'🍓',name:'草莓',type:'fruit',note:'草莓紅紅的，很甜，也是水果類。'},
+    {emoji:'🧀',name:'起司',type:'dairy',note:'起司是用牛奶做的，所以和牛奶一樣放「牛奶類」。'},
+    {emoji:'🫒',name:'橄欖油',type:'oil',note:'橄欖油是炒菜用的油，放「油脂堅果」那格。'},
+    {emoji:'🍇',name:'葡萄',type:'fruit',note:'葡萄一顆一顆紫紫的，是水果，放「水果」那格。'},
+    {emoji:'🍤',name:'蝦子',type:'protein',note:'蝦子是海裡的動物，也是肉類，放「肉蛋豆」那格。'},
+  ],
+  lv3:[
+    {emoji:'🧆',name:'豆腐',type:'protein',note:'豆腐是黃豆做的，不是蔬菜！它要放「肉蛋豆」那格。'},
+    {emoji:'🥗',name:'豆漿',type:'protein',note:'豆漿也是黃豆做的飲料，要放「肉蛋豆」，不是牛奶類喔！'},
+    {emoji:'🍵',name:'優格',type:'dairy',note:'優格白白的、酸酸甜甜的，是牛奶發酵做的，放「牛奶類」。'},
+    {emoji:'🥔',name:'馬鈴薯',type:'grain',note:'馬鈴薯長得像地瓜，也是「飯麵類」，不是蔬菜喔！'},
+    {emoji:'🥬',name:'高麗菜',type:'veg',note:'高麗菜是綠色的葉菜，當然是放「蔬菜」那格！'},
+    {emoji:'🍈',name:'木瓜',type:'fruit',note:'木瓜橘橘的，甜甜軟軟的，是水果，放「水果」那格。'},
+    {emoji:'🌻',name:'葵花籽',type:'oil',note:'葵花籽小小顆，可以榨成葵花油，放「油脂堅果」那格。'},
+    {emoji:'🍦',name:'冰淇淋',type:'dairy',note:'冰淇淋是牛奶做的，所以放「牛奶類」，不是甜點類喔！'},
+    {emoji:'🥑',name:'酪梨',type:'oil',note:'酪梨看起來像水果，但裡面油油的，放「油脂堅果」那格。'},
+    {emoji:'🍤',name:'蝦子',type:'protein',note:'蝦子是海鮮，海鮮也是肉類，放「肉蛋豆」那格。'},
+  ]
+};
+const FOOD_LEVELS=[
+  {key:'lv1',name:'認識食物',timer:null},
+  {key:'lv2',name:'多一點食物',timer:null},
+  {key:'lv3',name:'加油挑戰！',timer:null},
+];
+
+let fLevel=0, fSelected=null, fCombo=0, fMaxCombo=0, fCorrect=0;
+let fTimerInt=null, fTimeLeft=0, fWrong=[];
+let fToastTO=null, fComboTO=null;
+
+/* ── drag state ── */
+let fDragChip=null, fGhost=null, fDragMoved=false;
+
+function initFoodGame(){
+  hideModal('f-modal-lv'); hideModal('f-modal-fin'); hideModal('f-modal-time');
+  fLevel=0; fSelected=null; fCombo=0; fMaxCombo=0; fCorrect=0; fWrong=[];
+  fDragChip=null;
+  fLoadLevel();
+}
+function fLoadLevel(){
+  const lv=FOOD_LEVELS[fLevel];
+  document.getElementById('f-level-badge').textContent=`第${fLevel+1}關`;
+  document.getElementById('f-level-title').textContent=lv.name;
+  document.getElementById('f-combo').textContent='0';
+  fCombo=0;
+  ['grain','protein','veg','fruit','dairy','oil'].forEach(t=>{
+    document.getElementById('fz-'+t).innerHTML='';
+  });
+  clearInterval(fTimerInt);
+  if(lv.timer){
+    fTimeLeft=lv.timer;
+    document.getElementById('f-timer').textContent=fTimeLeft+'s';
+    fTimerInt=setInterval(fTick,1000);
+  } else {
+    document.getElementById('f-timer').textContent='—';
+  }
+  const foods=[...FOOD_DATA[lv.key]].sort(()=>Math.random()-.5);
+  const pool=document.getElementById('food-pool');
+  pool.innerHTML='';
+  foods.forEach(f=>{
+    const ch=document.createElement('div');
+    ch.className='food-chip';
+    ch.dataset.type=f.type; ch.dataset.name=f.name;
+    ch.dataset.note=f.note; ch.dataset.emoji=f.emoji;
+    ch.innerHTML=`<span>${f.emoji}</span><span>${f.name}</span>`;
+    fBindDrag(ch);
+    pool.appendChild(ch);
+  });
+  fUpdateRemaining();
+}
+function fTick(){
+  fTimeLeft--;
+  document.getElementById('f-timer').textContent=fTimeLeft+'s';
+  if(fTimeLeft<=0){ clearInterval(fTimerInt); showModal('f-modal-time'); }
+}
+
+/* ═══════════════════════════════
+   DRAG  (mouse + touch unified)
+   ═══════════════════════════════ */
+function fBindDrag(ch){
+  /* ── Mouse ── */
+  ch.addEventListener('mousedown', e=>{
+    if(ch.classList.contains('f-placed')) return;
+    e.preventDefault();
+    fStartDrag(ch, e.clientX, e.clientY);
+  });
+  /* ── Touch ── */
+  ch.addEventListener('touchstart', e=>{
+    if(ch.classList.contains('f-placed')) return;
+    e.preventDefault();
+    const t=e.touches[0];
+    fStartDrag(ch, t.clientX, t.clientY);
+  }, {passive:false});
+}
+
+function fStartDrag(ch, x, y){
+  fDragChip = ch;
+  fDragMoved = false;
+  ch.classList.add('f-dragging');
+
+  /* 建立 ghost */
+  const g = document.createElement('div');
+  g.id = 'drag-ghost';
+  g.innerHTML = `<span>${ch.dataset.emoji}</span><span>${ch.dataset.name}</span>`;
+  document.body.appendChild(g);
+  fGhost = g;
+  fMoveGhost(x, y);
+
+  /* global listeners */
+  document.addEventListener('mousemove', fOnMouseMove);
+  document.addEventListener('mouseup',   fOnMouseUp);
+  document.addEventListener('touchmove', fOnTouchMove, {passive:false});
+  document.addEventListener('touchend',  fOnTouchEnd);
+}
+
+function fMoveGhost(x, y){
+  if(!fGhost) return;
+  fGhost.style.left = x + 'px';
+  fGhost.style.top  = y + 'px';
+  fDragMoved = true;
+}
+
+function fOnMouseMove(e){ fMoveGhost(e.clientX, e.clientY); fHighlightZoneAt(e.clientX, e.clientY); }
+function fOnTouchMove(e){ e.preventDefault(); const t=e.touches[0]; fMoveGhost(t.clientX,t.clientY); fHighlightZoneAt(t.clientX,t.clientY); }
+
+function fOnMouseUp(e){ fEndDrag(e.clientX, e.clientY); }
+function fOnTouchEnd(e){
+  const t = e.changedTouches[0];
+  fEndDrag(t.clientX, t.clientY);
+}
+
+function fHighlightZoneAt(x, y){
+  document.querySelectorAll('.fzone').forEach(z=>{
+    const r = z.getBoundingClientRect();
+    if(x>=r.left && x<=r.right && y>=r.top && y<=r.bottom){
+      z.classList.add('dz-over');
+    } else {
+      z.classList.remove('dz-over');
+    }
+  });
+}
+
+function fEndDrag(x, y){
+  /* remove listeners */
+  document.removeEventListener('mousemove', fOnMouseMove);
+  document.removeEventListener('mouseup',   fOnMouseUp);
+  document.removeEventListener('touchmove', fOnTouchMove);
+  document.removeEventListener('touchend',  fOnTouchEnd);
+
+  /* 清除 ghost */
+  if(fGhost){ fGhost.remove(); fGhost=null; }
+  document.querySelectorAll('.fzone').forEach(z=>z.classList.remove('dz-over'));
+
+  const ch = fDragChip;
+  if(!ch){ return; }
+  ch.classList.remove('f-dragging');
+
+  /* 如果幾乎沒移動 → 視為點擊（相容原本點擊流程） */
+  if(!fDragMoved){
+    fDragChip = null;
+    fOnChipClick(ch);
+    return;
+  }
+  fDragChip = null;
+
+  /* 找落點的 zone */
+  const zone = fZoneAt(x, y);
+  if(!zone){ return; } /* 沒放到任何 zone，取消 */
+  const ct=ch.dataset.type, zt=zone.dataset.type;
+  if(zt===ct){ fHandleOK(ch,zone); }
+  else { fHandleErr(ch,zone); }
+}
+
+function fZoneAt(x, y){
+  let found = null;
+  document.querySelectorAll('.fzone').forEach(z=>{
+    const r = z.getBoundingClientRect();
+    if(x>=r.left && x<=r.right && y>=r.top && y<=r.bottom) found=z;
+  });
+  return found;
+}
+
+/* 點擊備用流程（同原本邏輯） */
+function fOnChipClick(ch){
+  if(ch.classList.contains('f-placed')) return;
+  if(fSelected===ch){ ch.classList.remove('f-selected'); fSelected=null; fClearHL(); return; }
+  if(fSelected) fSelected.classList.remove('f-selected');
+  fSelected=ch; ch.classList.add('f-selected');
+  document.querySelectorAll('.fzone').forEach(z=>z.classList.add('fz-hl'));
+}
+function onFZoneClick(zone){
+  if(!fSelected) return;
+  const ct=fSelected.dataset.type, zt=zone.dataset.type;
+  if(zt===ct){ fHandleOK(fSelected,zone); }
+  else { fHandleErr(fSelected,zone); }
+  fSelected.classList.remove('f-selected'); fSelected=null; fClearHL();
+}
+
+function fHandleOK(ch,zone){
+  fCorrect++; fCombo++; if(fCombo>fMaxCombo) fMaxCombo=fCombo;
+  ch.classList.add('f-placed');
+  const p=document.createElement('div');
+  p.className=`placed-chip placed-${ch.dataset.type}`;
+  p.innerHTML=`${ch.dataset.emoji} ${ch.dataset.name}`;
+  zone.querySelector('.fzone-items').appendChild(p);
+  zone.classList.add('fz-ok'); setTimeout(()=>zone.classList.remove('fz-ok'),500);
+  showToast('t-ok',`⭐ 答對了！${ch.dataset.name} 放對了！`);
+  document.getElementById('f-combo').textContent=fCombo;
+  if(fCombo>=3) showCombo(`🔥 連擊 ${fCombo} 次！`);
+  fUpdateRemaining();
+  if(document.querySelectorAll('.food-chip:not(.f-placed)').length===0)
+    setTimeout(fLevelComplete,600);
+}
+function fHandleErr(ch,zone){
+  fCombo=0; document.getElementById('f-combo').textContent='0';
+  fWrong.push({emoji:ch.dataset.emoji,name:ch.dataset.name,note:ch.dataset.note});
+  zone.classList.add('fz-err'); setTimeout(()=>zone.classList.remove('fz-err'),400);
+  showToast('t-err',`❌ 答錯了～ ${ch.dataset.note}`);
+}
+function fClearHL(){ document.querySelectorAll('.fzone').forEach(z=>z.classList.remove('fz-hl')); }
+function fUpdateRemaining(){
+  document.getElementById('f-remaining').textContent=
+    document.querySelectorAll('.food-chip:not(.f-placed)').length;
+}
+function fLevelComplete(){
+  clearInterval(fTimerInt);
+  if(fLevel<FOOD_LEVELS.length-1){
+    document.getElementById('f-stat-ok').textContent=fCorrect;
+    document.getElementById('f-stat-combo').textContent=fMaxCombo;
+    document.getElementById('f-modal-lv-sub').textContent=`正確${fCorrect}題，連擊${fMaxCombo}次！`;
+    showModal('f-modal-lv'); launchConfetti();
+  } else {
+    // build wrong list
+    const el=document.getElementById('f-wrong-list'); el.innerHTML='';
+    const seen=new Set();
+    fWrong.forEach(f=>{
+      if(seen.has(f.name)) return; seen.add(f.name);
+      const d=document.createElement('div');
+      d.className='review-item ri-wrong';
+      d.innerHTML=`<span style="font-size:1.2rem">${f.emoji}</span><div><div class="ri-name">${f.name}</div><div class="ri-note">${f.note}</div></div>`;
+      el.appendChild(d);
+    });
+    if(fWrong.length===0){
+      el.innerHTML='<p style="color:var(--veg);font-weight:800;font-size:.9rem;">🎊 全部答對！太厲害了！</p>';
+    }
+    showModal('f-modal-fin'); launchConfetti();
+  }
+}
+function fNextLevel(){ hideModal('f-modal-lv'); fLevel++; fCorrect=0; fWrong=[]; fCombo=0; fMaxCombo=0; fLoadLevel(); }
+function fRetry(){ hideModal('f-modal-time'); fCorrect=0; fCombo=0; fMaxCombo=0; fLoadLevel(); }
+
+/* =================================================================
+   GAME 2: PHYSICS QUIZ
+   ================================================================= */
+const PHYSICS_QS=[
+  {cat:'搭車安全',emoji:'🚌',
+   q:'公車突然停下來，你的身體會往哪邊傾？',
+   opts:['往前倒','往後倒','往旁邊倒'],
+   ans:0,
+   explain:'答案是往前倒！<br><br>車子停了，但你的身體還想繼續往前跑，所以就往前傾了。<br>⭐ 記住：搭車要抓好扶手，這樣才不會跌倒！'},
+  {cat:'生活觀察',emoji:'🛏️',
+   q:'媽媽用力拍打棉被，灰塵會怎樣？',
+   opts:['灰塵掉下來','灰塵不動','灰塵變多了'],
+   ans:0,
+   explain:'答案是灰塵掉下來！<br><br>棉被被拍動了，但灰塵還沒動，所以灰塵就脫離棉被掉下去了。<br>⭐ 曬棉被的時候拍一拍，棉被就會更乾淨！'},
+  {cat:'運動觀察',emoji:'🏃',
+   q:'跑步選手衝過終點，為什麼不能馬上停下來？',
+   opts:['因為腳停不下來','因為想繼續跑','因為肚子餓了'],
+   ans:0,
+   explain:'答案是因為腳停不下來！<br><br>跑很快的時候，身體還在往前衝，要跑一段才能慢慢停下來。<br>⭐ 就像腳踏車踩很快，停踩之後還會繼續滑一段。'},
+  {cat:'廚房觀察',emoji:'🍅',
+   q:'番茄醬倒不出來，用力往下甩再突然停住，醬會怎樣？',
+   opts:['醬會衝出來','醬還是不動','醬會往上跑'],
+   ans:0,
+   explain:'答案是醬會衝出來！<br><br>你的手停了，但醬還想繼續往下跑，所以就衝出瓶口了。<br>⭐ 下次醬倒不出來，試試看甩一甩再停住！'},
+  {cat:'生活觀察',emoji:'💧',
+   q:'洗完手甩手，水珠為什麼會飛出去？',
+   opts:['水珠繼續往外飛','水珠被吹走了','水珠蒸發了'],
+   ans:0,
+   explain:'答案是水珠繼續往外飛！<br><br>手甩出去的時候，水珠也跟著動。手停了，但水珠還在飛，所以就脫離手掌飛出去了。<br>⭐ 洗完手記得甩乾，再用毛巾擦！'},
+  {cat:'生活觀察',emoji:'🪣',
+   q:'裝了水的水桶，提起來走路時，水會怎樣晃動？',
+   opts:['會跟著你走的方向晃','不會動','會跳出來'],
+   ans:0,
+   explain:'答案是會跟著你走的方向晃！<br><br>你往前走，水也想跟著往前；你突然停下來，水還想繼續往前，所以就晃動了。<br>⭐ 提水桶要慢慢走，這樣水就不容易灑出來！'},
+];
+
+let pIdx=0, pScore=0;
+
+function initPhysicsGame(){
+  pIdx=0; pScore=0;
+  renderPhysQ();
+}
+function renderPhysQ(){
+  const total=PHYSICS_QS.length;
+  document.getElementById('p-progress').style.width=(pIdx/total*100)+'%';
+  if(pIdx>=total){ renderPhysScore(); return; }
+  const q=PHYSICS_QS[pIdx];
+  const html=`
+    <div class="phys-card">
+      <div class="phys-cat">${q.emoji} ${q.cat}</div>
+      <div class="phys-q" style="font-size:1.15rem;line-height:1.65;">Q${pIdx+1}. ${q.q}</div>
+      <div class="phys-opts" id="p-opts">
+        ${q.opts.map((o,i)=>`
+          <button class="phys-opt" style="font-size:1rem;padding:14px 16px;" onclick="onPhysOpt(${i})" id="po-${i}">
+            <span class="opt-letter">${'ABCD'[i]}</span>${o}
+          </button>`).join('')}
+      </div>
+      <div id="p-explain" class="hidden"></div>
+    </div>
+    <button class="btn-phys-next hidden" id="p-next" onclick="pNext()">
+      ${pIdx<total-1 ? '下一題 →' : '看看我的成績 🏆'}
+    </button>`;
+  document.getElementById('phys-content').innerHTML=html;
+}
+function onPhysOpt(i){
+  const q=PHYSICS_QS[pIdx];
+  document.querySelectorAll('.phys-opt').forEach(b=>b.disabled=true);
+  const correct=i===q.ans;
+  if(correct) pScore++;
+  document.querySelectorAll('.phys-opt').forEach((b,j)=>{
+    if(j===q.ans) b.classList.add('po-correct');
+    else if(j===i && !correct) b.classList.add('po-wrong');
+  });
+  const ex=document.getElementById('p-explain');
+  ex.className='phys-explain';
+  ex.innerHTML=`<strong>${correct?'⭐ 答對了！':'❌ 答錯了。'}</strong><br><br>${q.explain}`;
+  document.getElementById('p-next').classList.remove('hidden');
+}
+function pNext(){ pIdx++; renderPhysQ(); window.scrollTo(0,0); }
+function renderPhysScore(){
+  document.getElementById('p-progress').style.width='100%';
+  const total=PHYSICS_QS.length;
+  const pct=Math.round(pScore/total*100);
+  const stars=pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  const fb=pct>=90?'太厲害了！你是生活物理達人 👏':pct>=60?'很不錯喔！你觀察到很多！':'沒關係，再玩一次就會更厲害！';
+  document.getElementById('phys-content').innerHTML=`
+    <div class="phys-score">
+      <span style="font-size:3rem">🔬</span>
+      <div class="score-big">${pScore} / ${total}</div>
+      <div class="score-stars">${stars}</div>
+      <div class="score-label">${fb}</div>
+      <div class="phys-score-grid">
+        <div class="psg-cell"><div class="psc-l">答對題數</div><div class="psc-v">${pScore} 題</div></div>
+        <div class="psg-cell"><div class="psc-l">正確率</div><div class="psc-v">${pct}%</div></div>
+      </div>
+      <button class="btn-phys-redo" onclick="initPhysicsGame()">再挑戰一次 🔄</button>
+      <button class="btn-m btn-secondary" onclick="goHome()" style="margin-top:0">回首頁</button>
+    </div>`;
+  if(pct>=90) launchConfetti();
+}
+
+/* =================================================================
+   GAME 3: VIETNAM QUIZ
+   ================================================================= */
+const VIET_QS=[
+  {q:'越南的「河粉」是什麼樣的食物？',
+   opts:['一種湯麵','一種炒飯','一種蛋糕'],
+   ans:0,
+   hint:'答案是湯麵！<br><br>河粉是越南最有名的麵食，湯頭清清淡淡的，可以加牛肉或雞肉。<br>⭐ 越南語叫做「Pho」，你可以試試看念「佛」這個音！'},
+  {q:'越南在哪裡？它是台灣的什麼方向？',
+   opts:['在台灣的南方','在台灣的北方','在台灣的東方'],
+   ans:0,
+   hint:'答案是南方！<br><br>越南在台灣的南邊，坐飛機大概 2~3 個小時就到了，不太遠喔。<br>⭐ 越南的天氣很熱，因為它在靠近赤道的地方！'},
+  {q:'越南的傳統衣服叫什麼名字？',
+   opts:['奧黛','和服','韓服'],
+   ans:0,
+   hint:'答案是奧黛！<br><br>奧黛是越南女生的傳統服裝，長長的，旁邊有開叉，裡面穿長褲，很漂亮。<br>⭐ 就像台灣有旗袍，越南有奧黛！'},
+  {q:'在越南的馬路上，最多人騎什麼車？',
+   opts:['摩托車','腳踏車','公車'],
+   ans:0,
+   hint:'答案是摩托車！<br><br>越南馬路上有好多好多摩托車，有時候塞車了，一眼望去全是摩托車，非常壯觀！<br>⭐ 越南人很多從小就騎摩托車上下班、送東西。'},
+  {q:'越南人過年的時候，紅包袋是什麼顏色的？',
+   opts:['紅色','藍色','白色'],
+   ans:0,
+   hint:'答案是紅色！<br><br>越南和台灣一樣過農曆年，紅包也是紅色的，代表好運和祝福。<br>⭐ 越南過年叫做「Tet」，大家會放鞭炮、吃好料、穿新衣服！'},
+  {q:'越南有一個很有名的海邊景點，海裡有很多大石頭，叫什麼名字？',
+   opts:['下龍灣','澎湖灣','東京灣'],
+   ans:0,
+   hint:'答案是下龍灣！<br><br>下龍灣在越南北部的海上，海裡有很多很高的石頭山，坐船穿過去超級漂亮！<br>⭐ 下龍灣是世界遺產，就像台灣的日月潭一樣有名！'},
+  {q:'越南人吃飯時，最常用什麼工具吃東西？',
+   opts:['筷子','刀叉','湯匙'],
+   ans:0,
+   hint:'答案是筷子！<br><br>越南和台灣一樣用筷子吃飯，不過他們的筷子有時候比較長一點。<br>⭐ 越南人吃河粉的時候，還會拿湯匙一起用！'},
+  {q:'越南的錢叫做什麼名字？',
+   opts:['越南盾','美金','台幣'],
+   ans:0,
+   hint:'答案是越南盾！<br><br>越南的錢叫做「盾」，面額很大，一萬盾大概等於台幣十幾元。<br>⭐ 去越南旅行的時候，錢包裡要放很多張，但其實沒有你想的那麼多錢！'},
+  {q:'越南的法國麵包長什麼樣子？',
+   opts:['外皮脆脆、長長的一條','圓圓的、軟軟的','小小的正方形'],
+   ans:0,
+   hint:'答案是外皮脆脆、長長的一條！<br><br>越南有很多法國麵包的攤子，他們把麵包切開，夾進肉和蔬菜，就是好吃的越南三明治！<br>⭐ 這是法國人以前留下來的食物，現在變成越南很受歡迎的小吃了！'},
+  {q:'越南新年的時候，大家最常做什麼事？',
+   opts:['和家人吃飯、穿新衣服','去海邊游泳','去學校上課'],
+   ans:0,
+   hint:'答案是和家人吃飯、穿新衣服！<br><br>越南過年跟台灣很像，大家會回家團圓、穿漂亮的新衣服、一起吃很多好料的！<br>⭐ 越南過年也有紅包可以拿，小朋友最開心了！'},
+];
+
+let vIdx=0, vScore=0;
+
+function initVietGame(){
+  vIdx=0; vScore=0;
+  renderVietQ();
+}
+function renderVietQ(){
+  const total=VIET_QS.length;
+  document.getElementById('v-progress').style.width=(vIdx/total*100)+'%';
+  if(vIdx>=total){ renderVietScore(); return; }
+  const q=VIET_QS[vIdx];
+  const html=`
+    <div class="viet-card">
+      <div class="viet-cat">🇻🇳 第 ${vIdx+1} 題 / ${total}</div>
+      <div class="viet-q" style="font-size:1.15rem;line-height:1.65;">${q.q}</div>
+      <div class="viet-opts" id="v-opts">
+        ${q.opts.map((o,i)=>`
+          <button class="viet-opt" style="font-size:1rem;padding:14px 16px;" onclick="onVietOpt(${i})" id="vo-${i}">
+            <span class="vopt-letter">${'ABCD'[i]}</span>${o}
+          </button>`).join('')}
+      </div>
+      <div id="v-hint" class="hidden"></div>
+    </div>
+    <button class="btn-viet-next hidden" id="v-next" onclick="vNext()">
+      ${vIdx<total-1 ? '下一題 →' : '看看我的成績 🏆'}
+    </button>`;
+  document.getElementById('viet-content').innerHTML=html;
+}
+function onVietOpt(i){
+  const q=VIET_QS[vIdx];
+  document.querySelectorAll('.viet-opt').forEach(b=>b.disabled=true);
+  const correct=i===q.ans;
+  if(correct) vScore++;
+  document.querySelectorAll('.viet-opt').forEach((b,j)=>{
+    if(j===q.ans) b.classList.add('vo-correct');
+    else if(j===i && !correct) b.classList.add('vo-wrong');
+  });
+  const hint=document.getElementById('v-hint');
+  hint.className='viet-hint';
+  hint.innerHTML=`<strong>${correct?'⭐ 正確！':'❌ 答錯了。'}</strong><br><br>${q.hint}`;
+  document.getElementById('v-next').classList.remove('hidden');
+}
+function vNext(){ vIdx++; renderVietQ(); window.scrollTo(0,0); }
+function renderVietScore(){
+  document.getElementById('v-progress').style.width='100%';
+  const total=VIET_QS.length;
+  const pct=Math.round(vScore/total*100);
+  const stars=pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  const fb=pct>=90?'太厲害了！你對越南知道好多 🎉':pct>=60?'很不錯喔！你學到了很多！':'沒關係，這些知識以後慢慢記就好！';
+  document.getElementById('viet-content').innerHTML=`
+    <div class="viet-score">
+      <span style="font-size:3rem">🇻🇳</span>
+      <div class="vscore-big">${vScore} / ${total}</div>
+      <div class="vscore-stars">${stars}</div>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:20px;">${fb}</p>
+      <div class="phys-score-grid">
+        <div class="psg-cell"><div class="psc-l">答對題數</div><div class="psc-v">${vScore} 題</div></div>
+        <div class="psg-cell"><div class="psc-l">正確率</div><div class="psc-v">${pct}%</div></div>
+      </div>
+      <button class="btn-viet-redo" onclick="initVietGame()">再挑戰一次 🔄</button>
+      <button class="btn-m btn-secondary" onclick="goHome()" style="margin-top:0">回首頁</button>
+    </div>`;
+  if(pct>=90) launchConfetti();
+}
+
+/* =================================================================
+   SHARED HELPERS
+   ================================================================= */
+function showModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function hideModal(id){ document.getElementById(id).classList.add('hidden'); }
+
+function showToast(cls, txt){
+  const t=document.getElementById('toast');
+  t.className='toast '+cls+' t-show';
+  document.getElementById('toast-text').textContent=txt;
+  clearTimeout(fToastTO);
+  fToastTO=setTimeout(()=>t.classList.remove('t-show'),2000);
+}
+function showCombo(txt){
+  const b=document.getElementById('combo-badge');
+  b.textContent=txt; b.classList.add('cb-show');
+  clearTimeout(fComboTO);
+  fComboTO=setTimeout(()=>b.classList.remove('cb-show'),1500);
+}
+function launchConfetti(){
+  confetti({particleCount:120,spread:80,origin:{y:.5},
+    colors:['#F5A623','#E05B5B','#4CAF7D','#9B59B6','#3A9BD5','#E07B3A']});
+}
+</script>
+
+<!-- ── HAMBURGER BUTTON ── -->
+<button class="hamburger-btn" id="ham-btn" onclick="toggleDrawer()" aria-label="選遊戲">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ── DRAWER OVERLAY ── -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- ── DRAWER ── -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-header-title">🎮 選一個遊戲</div>
+    <div class="drawer-header-sub">點一下就可以開始！</div>
+  </div>
+  <div class="drawer-items">
+    <div class="drawer-item drawer-item-food" onclick="drawerGoGame('game-food','food')">
+      <div class="drawer-item-icon">🌈</div>
+      <div class="drawer-item-info">
+        <div class="drawer-item-name">飲食彩虹大冒險</div>
+        <div class="drawer-item-desc">認識六大類食物，共 3 關</div>
+      </div>
+      <div class="drawer-item-tag">營養教育</div>
+    </div>
+    <div class="drawer-item drawer-item-physics" onclick="drawerGoGame('game-physics','physics')">
+      <div class="drawer-item-icon">🚌</div>
+      <div class="drawer-item-info">
+        <div class="drawer-item-name">生活物理小問答</div>
+        <div class="drawer-item-desc">生活中的物理現象，共 6 題</div>
+      </div>
+      <div class="drawer-item-tag">自然科學</div>
+    </div>
+    <div class="drawer-item drawer-item-vietnam" onclick="drawerGoGame('game-vietnam','vietnam')">
+      <div class="drawer-item-icon">🇻🇳</div>
+      <div class="drawer-item-info">
+        <div class="drawer-item-name">認識越南小問答</div>
+        <div class="drawer-item-desc">越南文化與生活，共 10 題</div>
+      </div>
+      <div class="drawer-item-tag">文化探索</div>
+    </div>
+    <div class="drawer-item" onclick="drawerGoGame('home','home')" style="margin-top:4px;">
+      <div class="drawer-item-icon" style="background:var(--bg);">🏠</div>
+      <div class="drawer-item-info">
+        <div class="drawer-item-name">回到首頁</div>
+        <div class="drawer-item-desc">回到周老師的學習樂園</div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">周老師的學習樂園 ❤️</div>
+</div>
+<script>
+/* ── DRAWER ── */
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('ham-btn').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('ham-btn').classList.remove('open');
+}
+function toggleDrawer(){
+  const d=document.getElementById('drawer');
+  if(d.classList.contains('open')) closeDrawer(); else openDrawer();
+}
+function drawerGoGame(id, type){
+  closeDrawer();
+  if(id==='home'){ goHome(); return; }
+  goGame(id);
+  if(type==='food') initFoodGame();
+  if(type==='physics') initPhysicsGame();
+  if(type==='vietnam') initVietGame();
+}
+function openDrawerTo(type){
+  closeDrawer();
+  if(type==='food'){ goGame('game-food'); initFoodGame(); }
+  else if(type==='physics'){ goGame('game-physics'); initPhysicsGame(); }
+  else if(type==='vietnam'){ goGame('game-vietnam'); initVietGame(); }
+}
+</script>
+</body>
+</html>
